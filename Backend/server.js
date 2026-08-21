@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import transactionRoutes from "./routes/transactionRoutes.js";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 
 // Test Route
@@ -28,8 +30,8 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
     try {
+        
         await connectDB();
-    
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
@@ -38,4 +40,4 @@ const startServer = async () => {
     }
 };
 
-  startServer();
+startServer();
