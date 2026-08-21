@@ -112,4 +112,48 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
-export { createTransaction, getTransactions,getTransactionById,deleteTransaction };
+const updateTransaction = async (req, res) => {
+  try {
+    const {
+      title,
+      amount,
+      type,
+      category,
+      description,
+      date,
+    } = req.body;
+
+    const transaction = await Transaction.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!transaction) {
+      return res.status(404).json({
+        message: "Transaction not found",
+      });
+    }
+
+    transaction.title = title ?? transaction.title;
+    transaction.amount = amount ?? transaction.amount;
+    transaction.type = type ?? transaction.type;
+    transaction.category = category ?? transaction.category;
+    transaction.description =
+      description ?? transaction.description;
+    transaction.date = date ?? transaction.date;
+
+    const updatedTransaction = await transaction.save();
+
+    res.status(200).json({
+      message: "Transaction updated successfully",
+      transaction: updatedTransaction,
+    });
+  } catch (error) {
+    console.error("Update Transaction Error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+export { createTransaction, getTransactions,getTransactionById,deleteTransaction,updateTransaction };
