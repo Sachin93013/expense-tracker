@@ -44,12 +44,37 @@ const createTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find({
+    const { type, category, search } = req.query;
+
+    const filter = {
       userId: req.userId,
-    }).sort({ date: -1 });
+    };
+
+    // Filter by type
+    if (type) {
+      filter.type = type;
+    }
+
+    // Filter by category
+    if (category) {
+      filter.category = category;
+    }
+
+    // Search by title
+    if (search) {
+      filter.title = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    const transactions = await Transaction.find(filter).sort({
+      date: -1,
+    });
 
     res.status(200).json({
       message: "Transactions fetched successfully",
+      count: transactions.length,
       transactions,
     });
   } catch (error) {
